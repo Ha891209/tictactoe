@@ -54,11 +54,21 @@ const checkRowValues = () => {
 
 // Megnézem hogy van e olyan oszlop, ahol minden elem ugyanaz
 // TODO: Meg kell írnod, boolean adjon vissza
-const checkColumnValues = () => { }
+const checkColumnValues = () => { 
+    const values = matrix.map(col =>
+        col.every((value) => value === 'X') ||
+        col.every((value) => value === 'O'))
+    return values.indexOf(true) !== -1 ? true : false;
+}
 
 // Megnézem hogy van e olyan oszlop, ahol minden elem ugyanaz
 // TODO: Meg kell írnod, boolean adjon vissza
-const checkDiagonalValues = () => { }
+const checkDiagonalValues = () => { 
+    const values = matrix.map(diag =>
+        diag.every((value) => value === 'X') ||
+        diag.every((value) => value === 'O'))
+    return values.indexOf(true) !== -1 ? true : false;
+}
 
 
 // TODO: Meg kell írnod, nincs befejezve
