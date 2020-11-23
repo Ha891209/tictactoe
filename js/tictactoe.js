@@ -1,16 +1,13 @@
-// maga a mátrix, egyelőre csak egy üres tömb
+'use strict';
+
 const matrix = [];
-// sorok és oszlopok száma, hátha nem nágyzetes
 const rows = 3;
 const cols = 3;
-// lépések száma
 let stepCount = 0;
-// az aktuális jel
 let mark = 'X'
 
-// csak feltöltöm a mátrixot (valjában opcionális lépés is lehet)
+
 const initState = () => {
-    // ehelyett a fill metódussal szebb lenne
     for (let i = 0; i < rows; i += 1) {
         matrix[i] = [];
         for (let j = 0; j < cols; j += 1) {
@@ -19,8 +16,6 @@ const initState = () => {
     }
 }
 
-// a mátrix egy elemének értéket adok, az adott elem data attrinutumait 
-// felhasználva nyerem ki az értéket
 const changeMatrixValue = (element) => {
     const row = parseInt(element.dataset.row, 10);
     const cell = parseInt(element.dataset.cell, 10);
@@ -37,14 +32,12 @@ const handleClick = (event) => {
     checkWinner();
 }
 
-// minden elemhez hozzáadom az eseményfigyelőt
 const addListener = () => {
     document.querySelectorAll('.tictactoe__cell').forEach(element => {
         element.addEventListener('click', handleClick)
     });
 }
 
-// ha van győrztes minden elemről eltávolítom az eseményfigyelőt
 const removeListener = () => {
     document.querySelectorAll('.tictactoe__cell').forEach(element => {
         element.removeListener('click', handleClick)
@@ -52,7 +45,6 @@ const removeListener = () => {
 }
 'use strict';
 
-// Megnézem hogy van e olyan sor, ahol minden elem ugyanaz
 const checkRowValues = () => {
     const values = matrix.map(row =>
         row.every((value) => value === 'X') ||
