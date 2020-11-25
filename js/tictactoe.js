@@ -1,19 +1,13 @@
 'use strict';
 
-const matrix = [];
 const rows = 3;
 const cols = 3;
+let matrix;
 let stepCount = 0;
-let mark = 'X'
-
+let mark = 'X';
 
 const initState = () => {
-    for (let i = 0; i < rows; i += 1) {
-        matrix[i] = [];
-        for (let j = 0; j < cols; j += 1) {
-            matrix[i][j] = null;
-        }
-    }
+    matrix = Array(cols).fill(null).map(() => Array(rows).fill(null))
 }
 
 const changeMatrixValue = (element) => {
@@ -22,61 +16,99 @@ const changeMatrixValue = (element) => {
     matrix[row][cell] = element.textContent;
 }
 
-// kattintáskor mi történjen, érdemes lenne több függvényre bontani
-const handleClick = (event) => {
+const deleteSigns = () => {
+    document
+        .querySelectorAll('.tictactoe__cell')
+        .forEach(element => {
+            element.textContent = '';
+        });
+}
+
+
+const increaseCounter = () => {
     stepCount += 1;
-    event.target.removeEventListener('click', handleClick);
-    event.target.textContent = mark;
+}
+
+const modifyCell = (element) => {
+    element.textContent = mark;
+    element.removeEventListener('click', handleClick);
+}
+
+const setMark = () => {
     mark = mark === 'X' ? 'O' : 'X';
+}
+
+const handleClick = (event) => {
+    increaseCounter();
+    modifyCell(event.target);
+    setMark();
     changeMatrixValue(event.target);
     checkWinner();
 }
 
-const addListener = () => {
-    document.querySelectorAll('.tictactoe__cell').forEach(element => {
-        element.addEventListener('click', handleClick)
-    });
+const addClickListener = () => {
+    document
+        .querySelectorAll('.tictactoe__cell')
+        .forEach(element => {
+            element.addEventListener('click', handleClick)
+        });
 }
 
-const removeListener = () => {
-    document.querySelectorAll('.tictactoe__cell').forEach(element => {
-        element.removeListener('click', handleClick)
-    });
-}
-'use strict';
-
-const checkRowValues = () => {
-    const values = matrix.map(row =>
-        row.every((value) => value === 'X') ||
-        row.every((value) => value === 'O'))
-    return values.indexOf(true) !== -1 ? true : false;
+const removeAllClickListener = () => {
+    document.querySelectorAll('.tictactoe__cell')
+        .forEach(element => {
+            element.removeEventListener('click', handleClick)
+        });
 }
 
-// Megnézem hogy van e olyan oszlop, ahol minden elem ugyanaz
-// TODO: Meg kell írnod, boolean adjon vissza
-const checkColumnValues = () => { 
-    const values = matrix.map(col =>
-        col.every((value) => value === 'X') ||
-        col.every((value) => value === 'O'))
-    return values.indexOf(true) !== -1 ? true : false;
-}
+const checkValues = (arr) => arr.map(row =>
+    row.every((value) => value === 'X') ||
+    row.every((value) => value === 'O'))
+    .indexOf(true) !== -1;
 
-// Megnézem hogy van e olyan oszlop, ahol minden elem ugyanaz
-// TODO: Meg kell írnod, boolean adjon vissza
-const checkDiagonalValues = () => { 
-    const values = matrix.map(diag =>
-        diag.every((value) => value === 'X') ||
-        diag.every((value) => value === 'O'))
-    return values.indexOf(true) !== -1 ? true : false;
-}
+const checkColumnValues = () =>
+    checkValues(matrix.map((arr, i) => arr.map((item, j) => matrix[j][i])))
 
+const checkDiagonalValues = () =>
+    checkValues([
+        matrix.map((arr, i) => matrix[i][i]),
+        matrix.map((arr, i) => matrix[i][matrix[i].length - i - 1])
+    ])
 
-// TODO: Meg kell írnod, nincs befejezve
 const checkWinner = () => {
-    // Akár a checkRowValues, checkColumnValues, checkDiagonalValues true, akkor van győztes
-    // Csak azért van itt a log hogy lássátok hogy true akkor lesz ha van olyan sor ahol minden elem ugyanaz
-    console.log(checkRowValues());
+    console.log(checkColumnValues(), checkDiagonalValues());
+    if (checkValues(matrix) || checkColumnValues() || checkDiagonalValues()) {
+        endGame();
+    }
 }
 
-initState();
-addListener();
+const setMessage = (message) => {
+    document
+        .querySelector('.message')
+        .textContent = message
+}
+
+const startGame = () => {
+    initState();
+    addClickListener();
+    newGame();
+}
+
+const endGame = () => {
+    setMessage('A győztes: ' + (mark === 'X' ? 'O' : 'X'));
+    removeAllClickListener();
+}
+
+const newGame = () => {
+    document
+        .querySelector('.new-game')
+        .addEventListener('click', () => {
+            initState();
+            addClickListener();
+            deleteSigns();
+            setMessage('');
+            setMark()
+        })
+}
+
+startGame();
